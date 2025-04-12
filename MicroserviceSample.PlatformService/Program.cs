@@ -1,3 +1,4 @@
+using FluentValidation;
 using MicroserviceSample.PlatformService.Features.Platforms;
 using MicroserviceSample.PlatformService.Persistance;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddDefaultPersistenceModule();
+
+// Register FluentValidation
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var app = builder.Build();
 

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using MicroserviceSample.PlatformService.Features.Platforms.Endpoints;
+using MicroserviceSample.PlatformService.Common.Validators;
 
 namespace MicroserviceSample.PlatformService.Features.Platforms;
 
@@ -20,6 +21,7 @@ public static class PlatformEndpoints
 
         platforms.MapPost("/", CreatePlatformEndpoint.Handle)
             .WithName("CreatePlatform")
+            .AddEndpointFilter<ValidationFilter<PlatformCreateDto>>()
             .Produces<Created<PlatformReadDto>>()
             .Produces<BadRequest>();
     }
