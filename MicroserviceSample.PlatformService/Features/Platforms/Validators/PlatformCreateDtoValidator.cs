@@ -16,4 +16,3 @@ public class PlatformCreateDtoValidator : AbstractValidator<PlatformCreateDto>
             .NotEmpty().WithMessage("Cost is required.");
     }
 }
-

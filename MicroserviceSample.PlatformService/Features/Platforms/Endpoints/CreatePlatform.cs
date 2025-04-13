@@ -17,8 +17,6 @@ public static class CreatePlatformEndpoint
         await repository.CreatePlatformAsync(platform);
         await repository.SaveChangesAsync();
 
-        var readDto = mapper.Map<PlatformReadDto>(platform);
-
-        return TypedResults.Created($"/platforms/{readDto.Id}", readDto);
+        return TypedResults.Created($"/platforms/{platform.Id}", mapper.Map<PlatformReadDto>(platform));
     }
 }

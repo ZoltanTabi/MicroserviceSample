@@ -4,12 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MicroserviceSample.PlatformService.Persistance;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<Platform> Platforms { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
