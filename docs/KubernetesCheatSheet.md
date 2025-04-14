@@ -38,4 +38,22 @@ List all services in the current namespace:
 kubectl get services
 ```
 
+## Restart a Deployment
+Restart a specific deployment:
+```bash
+kubectl rollout restart deployment <deployment-name>
+```
+
+## Get Namespaces
+List all namespaces in the cluster:
+```bash
+kubectl get namespace
+```
+
+## Get Pods in a Specific Namespace
+List all pods in a specific namespace:
+```bash
+kubectl get pods --namespace=<namespace-name>
+```
+
 Use these commands to manage your Kubernetes resources efficiently.

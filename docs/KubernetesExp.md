@@ -1,6 +1,6 @@
 # Kubernetes YAML Files Explanation
 
-This document provides an explanation of the two YAML files located in the `K8S` folder.
+This document provides an explanation of the YAML files located in the `K8S` folder.
 
 ## 1. `deployment.yaml`
 
@@ -48,3 +48,14 @@ The `NodePort` type of Service exposes the application on a static port on each 
     - Requires the port to be within the range `30000-32767` by default.
 
 This configuration is useful for exposing services externally without requiring a cloud provider's load balancer.
+
+### ClusterIP Service Type
+The `ClusterIP` type of Service is the default service type in Kubernetes. It exposes the application on an internal IP address within the cluster, making it accessible only to other services or pods inside the cluster.
+
+- **Key Characteristics of ClusterIP**:
+    - Provides internal communication between services and pods.
+    - Does not expose the application to external traffic.
+    - Automatically assigns a cluster-internal IP address.
+    - Ideal for microservices that need to communicate internally without external access.
+
+This configuration is commonly used for backend services or internal APIs that do not require external exposure.
