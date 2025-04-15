@@ -8,8 +8,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("InMemoryDb"));
+
+if (builder.Environment.IsProduction())
+{
+    Console.WriteLine("--> Using SQL Server");
+    Console.WriteLine($"--> Connectionstring: {builder.Configuration.GetConnectionString("PlatformsConn")}");
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("PlatformsConn")));
+}
+else
+{
+    Console.WriteLine("--> Using InMemoryDb for development");
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseInMemoryDatabase("InMemoryDb"));
+}
 
 builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 
@@ -34,6 +46,6 @@ app.UseHttpsRedirection();
 // Register platform endpoints
 app.MapPlatformEndpoints();
 
-PrepDb.PrepPopulation(app);
+PrepDb.PrepPopulation(app, app.Environment.IsProduction());
 
 app.Run();

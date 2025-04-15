@@ -1,19 +1,35 @@
 ﻿using MicroserviceSample.PlatformService.Domains;
+using Microsoft.EntityFrameworkCore;
 
 namespace MicroserviceSample.PlatformService.Persistance;
 
 public static class PrepDb
 {
-    public static void PrepPopulation(IApplicationBuilder app)
+    public static void PrepPopulation(IApplicationBuilder app, bool isProduction)
     {
         using var serviceScope = app.ApplicationServices.CreateScope();
 
-        SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>());
+        SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProduction);
     }
 
-    private static void SeedData(AppDbContext? context)
+    private static void SeedData(AppDbContext? context, bool isProduction)
     {
         ArgumentNullException.ThrowIfNull(context);
+
+        if (isProduction)
+        {
+            Console.WriteLine("Applying migrations...");
+
+            try
+            {
+                context.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Could not apply migrations: {ex.Message}");
+                throw;
+            }
+        }
 
         if (context.Platforms.Any())
         {
