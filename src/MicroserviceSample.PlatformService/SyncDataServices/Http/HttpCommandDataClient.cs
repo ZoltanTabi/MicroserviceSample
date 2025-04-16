@@ -1,4 +1,4 @@
-﻿using MicroserviceSample.PlatformService.Features.Platforms;
+﻿using MicroserviceSample.PlatformService.Features.Platforms.Dtos;
 using System.Text;
 using System.Text.Json;
 

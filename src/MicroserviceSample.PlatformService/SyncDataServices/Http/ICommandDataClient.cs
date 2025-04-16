@@ -1,4 +1,4 @@
-﻿using MicroserviceSample.PlatformService.Features.Platforms;
+﻿using MicroserviceSample.PlatformService.Features.Platforms.Dtos;
 
 namespace MicroserviceSample.PlatformService.SyncDataServices.Http;
 

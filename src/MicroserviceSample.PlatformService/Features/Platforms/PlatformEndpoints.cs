@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using MicroserviceSample.PlatformService.Features.Platforms.Endpoints;
-using MicroserviceSample.PlatformService.Common.Validators;
+using MicroserviceSample.PlatformService.Features.Platforms.Dtos;
+using MicroserviceSample.PlatformService.Common.Filters;
 
 namespace MicroserviceSample.PlatformService.Features.Platforms;
 

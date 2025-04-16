@@ -1,4 +1,5 @@
 using FluentValidation;
+using MicroserviceSample.PlatformService.Features.Platforms.Dtos;
 
 namespace MicroserviceSample.PlatformService.Features.Platforms.Validators;
 

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace MicroserviceSample.PlatformService.Common.Validators;
+namespace MicroserviceSample.PlatformService.Common.Filters;
 
 public class ValidationFilter<T>(IValidator<T> validator) : IEndpointFilter where T : class
 {
