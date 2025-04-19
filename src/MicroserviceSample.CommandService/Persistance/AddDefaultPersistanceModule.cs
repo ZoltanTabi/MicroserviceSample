@@ -6,7 +6,7 @@ public static class AddDefaultPersistanceModule
 {
     public static IServiceCollection AddDefaultPersistenceModule(this IServiceCollection services)
     {
-        services.AddScoped<ICommandRepository, CommandRepository>();
+        services.AddSingleton<ICommandRepository, CommandRepository>();
 
         return services;
     }

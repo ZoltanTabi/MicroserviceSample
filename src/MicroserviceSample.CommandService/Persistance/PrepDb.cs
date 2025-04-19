@@ -1,5 +1,6 @@
 using MicroserviceSample.CommandService.Domains;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace MicroserviceSample.CommandService.Persistance;
 
@@ -9,29 +10,24 @@ public static class PrepDb
     {
         using var serviceScope = app.ApplicationServices.CreateScope();
 
-        SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProduction);
+        SeedData(app, isProduction);
     }
 
-    private static void SeedData(AppDbContext? context, bool isProduction)
+    private static void SeedData(IApplicationBuilder app, bool isProduction)
     {
-        ArgumentNullException.ThrowIfNull(context);
+        using var scope = app.ApplicationServices.CreateScope();
+        var commandStoreDatabaseSettings = scope.ServiceProvider.GetRequiredService<IOptions<CommandStoreDatabaseSettings>>();
 
-        if (isProduction)
-        {
-            Console.WriteLine("Applying migrations...");
+        var client = new MongoClient(commandStoreDatabaseSettings.Value.ConnectionString);
+        var database = client.GetDatabase(commandStoreDatabaseSettings.Value.DatabaseName);
 
-            try
-            {
-                context.Database.Migrate();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Could not apply migrations: {ex.Message}");
-                throw;
-            }
-        }
+        var commandsCollection = database.GetCollection<Command>(commandStoreDatabaseSettings.Value.CommandCollectionName);
+        var platformsCollection = database.GetCollection<Platform>(commandStoreDatabaseSettings.Value.PlatformCollectionName);
 
-        if (context.Platforms.Any() || context.Commands.Any())
+        ArgumentNullException.ThrowIfNull(commandsCollection);
+        ArgumentNullException.ThrowIfNull(platformsCollection);
+
+        if (platformsCollection.Find(_ => true).Any())
         {
             Console.WriteLine("We already have data");
             return;
@@ -46,17 +42,14 @@ public static class PrepDb
             new() { Name = "Kubernetes", ExternalId = 3 }
         };
 
-        context.Platforms.AddRange(platforms);
-        context.SaveChanges();
+        platformsCollection.InsertMany(platforms);
 
-        context.Commands.AddRange(
+        commandsCollection.InsertMany(
             new List<Command>
             {
                 new() { HowTo = "Run a .NET app", CommandLine = "dotnet run", PlatformId = platforms[0].Id },
                 new() { HowTo = "Create a migration", CommandLine = "dotnet ef migrations add", PlatformId = platforms[0].Id },
                 new() { HowTo = "Run SQL Server", CommandLine = "sqlcmd -S .", PlatformId = platforms[1].Id }
             });
-
-        context.SaveChanges();
     }
 }

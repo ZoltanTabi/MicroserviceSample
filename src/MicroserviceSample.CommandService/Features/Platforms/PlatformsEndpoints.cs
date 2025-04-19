@@ -21,7 +21,7 @@ public static class PlatformsEndpoints
             .Produces<Created<PlatformReadDto>>()
             .Produces<BadRequest>();
 
-        platforms.MapGet("/exists/{id:int}", PlatformExistsEndpoint.Handle)
+        platforms.MapGet("/exists/{id:length(24)}", PlatformExistsEndpoint.Handle)
             .WithName("PlatformExists")
             .Produces<Ok<bool>>();
     }

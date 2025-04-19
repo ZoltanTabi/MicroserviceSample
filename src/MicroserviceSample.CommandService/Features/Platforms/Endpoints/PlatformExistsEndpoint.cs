@@ -6,7 +6,7 @@ namespace MicroserviceSample.CommandService.Features.Platforms.Endpoints;
 public static class PlatformExistsEndpoint
 {
     public static async Task<Ok<bool>> Handle(
-        int id,
+        string id,
         ICommandRepository repository)
     {
         var exists = await repository.PlatformExistAsync(id);

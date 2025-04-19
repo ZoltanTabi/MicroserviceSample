@@ -8,10 +8,11 @@ public class ValidatePlatformIdFilter(ICommandRepository repository) : IEndpoint
 
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        if (context.HttpContext.Request.RouteValues.TryGetValue("platformId", out var platformIdValue) &&
-            int.TryParse(platformIdValue?.ToString(), out var platformId))
+        if (context.HttpContext.Request.RouteValues.TryGetValue("platformId", out var platformIdValue))
         {
-            if (!await repository.PlatformExistAsync(platformId))
+            var platformId = platformIdValue?.ToString();
+
+            if (string.IsNullOrEmpty(platformId) || !await repository.PlatformExistAsync(platformId))
             {
                 return TypedResults.NotFound($"Platform with ID {platformId} does not exist.");
             }

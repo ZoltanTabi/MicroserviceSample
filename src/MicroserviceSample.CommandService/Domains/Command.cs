@@ -1,16 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace MicroserviceSample.CommandService.Domains;
 
 public class Command
 {
-    public int Id { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } = string.Empty;
 
+    [BsonElement("HowTo")]
     public string HowTo { get; set; } = string.Empty;
 
+    [BsonElement("CommandLine")]
     public string CommandLine { get; set; } = string.Empty;
 
-    public int PlatformId { get; set; }
+    [BsonElement("PlatformId")]
+    public string PlatformId { get; set; } = string.Empty;
 
+    [BsonIgnore]
     public virtual Platform Platform { get; set; } = null!;
 }

@@ -2,8 +2,8 @@
 
 public class CommandReadDto
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     public string HowTo { get; set; } = string.Empty;
     public string CommandLine { get; set; } = string.Empty;
-    public int PlatformId { get; set; }
+    public string PlatformId { get; set; } = string.Empty;
 }

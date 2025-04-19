@@ -8,7 +8,7 @@ namespace MicroserviceSample.CommandService.Features.Commands.Endpoints;
 public static class CreateCommandEndpoint
 {
     public static async Task<IResult> Handle(
-        int platformId,
+        string platformId,
         CommandCreateDto commandDto,
         ICommandRepository repository,
         IMapper mapper)
@@ -21,7 +21,6 @@ public static class CreateCommandEndpoint
         var command = mapper.Map<Command>(commandDto);
 
         await repository.CreateCommandAsync(platformId, command);
-        await repository.SaveChangesAsync();
 
         var commandReadDto = mapper.Map<CommandReadDto>(command);
 

@@ -7,7 +7,7 @@ namespace MicroserviceSample.CommandService.Features.Commands.Endpoints;
 public static class GetCommandsForPlatformEndpoint
 {
     public static async Task<IResult> Handle(
-        int platformId,
+        string platformId,
         ICommandRepository repository,
         IMapper mapper)
     {

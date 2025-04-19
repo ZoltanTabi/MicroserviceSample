@@ -2,16 +2,14 @@ using FluentValidation;
 using MicroserviceSample.CommandService.Features.Commands;
 using MicroserviceSample.CommandService.Features.Platforms;
 using MicroserviceSample.CommandService.Persistance;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("InMemoryDb"));
+builder.Services.Configure<CommandStoreDatabaseSettings>(
+    builder.Configuration.GetSection("CommandStoreDatabase"));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

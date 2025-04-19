@@ -1,56 +1,66 @@
 using MicroserviceSample.CommandService.Domains;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace MicroserviceSample.CommandService.Persistance.Repositories;
 
-public class CommandRepository(AppDbContext context) : ICommandRepository
+public class CommandRepository : ICommandRepository
 {
-    private readonly AppDbContext context = context;
+    private readonly IMongoCollection<Command> commands;
+    private readonly IMongoCollection<Platform> platforms;
 
-    public async Task CreateCommandAsync(int platformId, Command command)
+    public CommandRepository(
+        IOptions<CommandStoreDatabaseSettings> commandStoreDatabaseSettings)
+    {
+        var client = new MongoClient(commandStoreDatabaseSettings.Value.ConnectionString);
+        var database = client.GetDatabase(commandStoreDatabaseSettings.Value.DatabaseName);
+
+        commands = database.GetCollection<Command>(commandStoreDatabaseSettings.Value.CommandCollectionName);
+        platforms = database.GetCollection<Platform>(commandStoreDatabaseSettings.Value.PlatformCollectionName);
+    }
+
+    public async Task CreateCommandAsync(string platformId, Command command)
     {
         ArgumentNullException.ThrowIfNull(command);
 
         command.PlatformId = platformId;
 
-        await context.Commands.AddAsync(command);
+        await commands.InsertOneAsync(command);
     }
 
     public async Task CreatePlatformAsync(Platform platform)
     {
         ArgumentNullException.ThrowIfNull(platform);
 
-        await context.Platforms.AddAsync(platform);
+        await platforms.InsertOneAsync(platform);
     }
 
     public async Task<IEnumerable<Platform>> GetAllPlatformsAsync()
     {
-        return await context.Platforms
-            .OrderBy(x => x.Name)
-            .ToListAsync();
+        return await platforms.Find(_ => true).ToListAsync();
     }
 
-    public async Task<Command?> GetCommandAsync(int platformId, int commandId)
+    public async Task<Command?> GetCommandAsync(string platformId, string commandId)
     {
-        return await context.Commands
-            .FirstOrDefaultAsync(x => x.PlatformId == platformId && x.Id == commandId);
+        var filter = Builders<Command>.Filter.And(
+            Builders<Command>.Filter.Eq(c => c.PlatformId, platformId),
+            Builders<Command>.Filter.Eq(c => c.Id, commandId)
+        );
+
+        return await commands.Find(filter).FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Command>> GetCommandsFormPlatformAsync(int platformId)
+    public async Task<IEnumerable<Command>> GetCommandsFormPlatformAsync(string platformId)
     {
-        return await context.Commands
-            .Where(x => x.PlatformId == platformId)
-            .OrderBy(x => x.Platform.Name)
-            .ToListAsync();
+        var filter = Builders<Command>.Filter.Eq(c => c.PlatformId, platformId);
+
+        return await commands.Find(filter).ToListAsync();
     }
 
-    public async Task<bool> PlatformExistAsync(int platformId)
+    public async Task<bool> PlatformExistAsync(string platformId)
     {
-        return await context.Platforms.AnyAsync(x => x.Id == platformId);
-    }
+        var filter = Builders<Platform>.Filter.Eq(p => p.Id, platformId);
 
-    public async Task<bool> SaveChangesAsync()
-    {
-        return (await context.SaveChangesAsync()) >= 0;
+        return await platforms.Find(filter).AnyAsync();
     }
 }

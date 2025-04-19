@@ -4,20 +4,17 @@ namespace MicroserviceSample.CommandService.Persistance.Repositories;
 
 public interface ICommandRepository
 {
-    Task<bool> SaveChangesAsync();
-
     // Platform
     Task<IEnumerable<Platform>> GetAllPlatformsAsync();
 
     Task CreatePlatformAsync(Platform platform);
 
-    Task<bool> PlatformExistAsync(int platformId);
+    Task<bool> PlatformExistAsync(string platformId);
 
     // Command
-    Task<IEnumerable<Command>> GetCommandsFormPlatformAsync(int platformId);
+    Task<IEnumerable<Command>> GetCommandsFormPlatformAsync(string platformId);
 
-    Task<Command?> GetCommandAsync(int platformId, int commandId);
+    Task<Command?> GetCommandAsync(string platformId, string commandId);
 
-    Task CreateCommandAsync(int platformId, Command command);
-
+    Task CreateCommandAsync(string platformId, Command command);
 }

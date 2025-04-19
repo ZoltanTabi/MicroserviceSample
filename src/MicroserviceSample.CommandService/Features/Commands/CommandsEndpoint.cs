@@ -9,14 +9,14 @@ public static class CommandsEndpoint
 {
     public static void MapCommandsEndpoints(this IEndpointRouteBuilder app)
     {
-        RouteGroupBuilder commands = app.MapGroup("/c/platforms/{platformId:int}/commands")
+        RouteGroupBuilder commands = app.MapGroup("/c/platforms/{platformId:length(24)}/commands")
             .AddEndpointFilter<ValidatePlatformIdFilter>();
 
         commands.MapGet("/", GetCommandsForPlatformEndpoint.Handle)
             .WithName("GetCommandsForPlatform")
             .Produces<Ok<List<CommandReadDto>>>();
 
-        commands.MapGet("/{commandId:int}", GetCommandEndpoint.Handle)
+        commands.MapGet("/{commandId:length(24)}", GetCommandEndpoint.Handle)
             .WithName("GetCommand")
             .Produces<Ok<CommandReadDto>>()
             .Produces<NotFound>();
