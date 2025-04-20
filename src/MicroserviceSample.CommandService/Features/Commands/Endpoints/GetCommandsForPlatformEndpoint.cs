@@ -13,11 +13,6 @@ public static class GetCommandsForPlatformEndpoint
     {
         Console.WriteLine($"--> Getting commands for platform {platformId}");
 
-        if (!await repository.PlatformExistAsync(platformId))
-        {
-            return TypedResults.NotFound();
-        }
-
         var commands = await repository.GetCommandsFormPlatformAsync(platformId);
 
         return TypedResults.Ok(mapper.Map<List<CommandReadDto>>(commands));
