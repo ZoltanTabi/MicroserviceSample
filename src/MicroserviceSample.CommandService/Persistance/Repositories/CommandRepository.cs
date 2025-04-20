@@ -1,6 +1,7 @@
 using MicroserviceSample.CommandService.Domains;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace MicroserviceSample.CommandService.Persistance.Repositories;
 
@@ -37,30 +38,24 @@ public class CommandRepository : ICommandRepository
 
     public async Task<IEnumerable<Platform>> GetAllPlatformsAsync()
     {
-        return await platforms.Find(_ => true).ToListAsync();
+        return await platforms.AsQueryable().ToListAsync();
     }
 
     public async Task<Command?> GetCommandAsync(string platformId, string commandId)
     {
-        var filter = Builders<Command>.Filter.And(
-            Builders<Command>.Filter.Eq(c => c.PlatformId, platformId),
-            Builders<Command>.Filter.Eq(c => c.Id, commandId)
-        );
-
-        return await commands.Find(filter).FirstOrDefaultAsync();
+        return await commands.AsQueryable()
+            .FirstOrDefaultAsync(c => c.PlatformId == platformId && c.Id == commandId);
     }
 
     public async Task<IEnumerable<Command>> GetCommandsFormPlatformAsync(string platformId)
     {
-        var filter = Builders<Command>.Filter.Eq(c => c.PlatformId, platformId);
-
-        return await commands.Find(filter).ToListAsync();
+        return await commands.AsQueryable()
+            .Where(c => c.PlatformId == platformId).ToListAsync();
     }
 
     public async Task<bool> PlatformExistAsync(string platformId)
     {
-        var filter = Builders<Platform>.Filter.Eq(p => p.Id, platformId);
-
-        return await platforms.Find(filter).AnyAsync();
+        return await platforms.AsQueryable()
+            .AnyAsync(p => p.Id == platformId);
     }
 }
