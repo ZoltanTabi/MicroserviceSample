@@ -8,14 +8,11 @@ namespace MicroserviceSample.PlatformService.AsyncDataServices;
 
 public class MessageBusClient : IMessageBusClient
 {
-    //private readonly IConfiguration configuration;
     private readonly IConnection connection;
     private readonly IChannel channel;
 
     public MessageBusClient(IConfiguration configuration)
     {
-        //this.configuration = configuration;
-
         var factory = new ConnectionFactory()
         {
             HostName = configuration["RabbitMQHost"]!,
