@@ -8,6 +8,7 @@ public class PlatformProfile : Profile
 {
     public PlatformProfile()
     {
+        // Source -> Target
         CreateMap<Platform, PlatformReadDto>();
         CreateMap<PlatformCreateDto, Platform>()
             .ForMember(dest => dest.Commands, opt => opt.Ignore());

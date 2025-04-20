@@ -8,6 +8,7 @@ public class CommandProfile : Profile
 {
     public CommandProfile()
     {
+        // Source -> Target
         CreateMap<Command, CommandReadDto>();
         CreateMap<CommandCreateDto, Command>()
             .ForMember(dest => dest.Platform, opt => opt.Ignore())
