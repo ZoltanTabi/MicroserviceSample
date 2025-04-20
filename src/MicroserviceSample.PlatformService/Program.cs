@@ -45,7 +45,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 // Register platform endpoints
 app.MapPlatformEndpoints();
