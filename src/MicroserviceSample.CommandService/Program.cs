@@ -1,4 +1,6 @@
 using FluentValidation;
+using MicroserviceSample.CommandService.AsyncDataServices;
+using MicroserviceSample.CommandService.EventProcessing;
 using MicroserviceSample.CommandService.Features.Commands;
 using MicroserviceSample.CommandService.Features.Platforms;
 using MicroserviceSample.CommandService.Persistance;
@@ -14,6 +16,10 @@ builder.Services.Configure<CommandStoreDatabaseSettings>(
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddDefaultPersistenceModule();
+
+builder.Services.AddHostedService<MessageBusSubscriber>();
+
+builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 
 // Register FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();

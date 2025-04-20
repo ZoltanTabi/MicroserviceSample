@@ -10,6 +10,8 @@ public interface ICommandRepository
     Task CreatePlatformAsync(Platform platform);
 
     Task<bool> PlatformExistAsync(string platformId);
+    
+    Task<bool> ExternalPlatformExistAsync(int externalPlatformId);
 
     // Command
     Task<IEnumerable<Command>> GetCommandsFormPlatformAsync(string platformId);

@@ -58,4 +58,10 @@ public class CommandRepository : ICommandRepository
         return await platforms.AsQueryable()
             .AnyAsync(p => p.Id == platformId);
     }
+
+    public async Task<bool> ExternalPlatformExistAsync(int externalPlatformId)
+    {
+        return await platforms.AsQueryable()
+            .AnyAsync(p => p.ExternalId == externalPlatformId);
+    }
 }
