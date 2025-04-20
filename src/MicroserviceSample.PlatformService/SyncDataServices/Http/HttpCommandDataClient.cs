@@ -9,10 +9,10 @@ public class HttpCommandDataClient(HttpClient httpClient, IConfiguration configu
     private readonly HttpClient httpClient = httpClient;
     private readonly IConfiguration configuration = configuration;
 
-    public async Task SendPlatformToCommand(PlatformReadDto platformReadDto)
+    public async Task SendPlatformToCommand(PlatformCreateExternalDto platformCreateExternalDto)
     {
         var httpContent = new StringContent(
-            JsonSerializer.Serialize(platformReadDto),
+            JsonSerializer.Serialize(platformCreateExternalDto),
             Encoding.UTF8,
             "application/json");
 

@@ -27,7 +27,9 @@ public static class CreatePlatformEndpoint
         // Send synchronously to CommandService
         try
         {
-            await commandDataClient.SendPlatformToCommand(platformReadDto);
+            var platformCreateExternalDto = mapper.Map<PlatformCreateExternalDto>(platformReadDto);
+
+            await commandDataClient.SendPlatformToCommand(platformCreateExternalDto);
         }
         catch (Exception ex)
         {
