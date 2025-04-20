@@ -1,4 +1,5 @@
 using FluentValidation;
+using MicroserviceSample.PlatformService.AsyncDataServices;
 using MicroserviceSample.PlatformService.Features.Platforms;
 using MicroserviceSample.PlatformService.Persistance;
 using MicroserviceSample.PlatformService.SyncDataServices.Http;
@@ -24,6 +25,7 @@ else
 }
 
 builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
+builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

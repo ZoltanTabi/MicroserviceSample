@@ -1,4 +1,5 @@
 using AutoMapper;
+using MicroserviceSample.PlatformService.AsyncDataServices;
 using MicroserviceSample.PlatformService.Domains;
 using MicroserviceSample.PlatformService.Features.Platforms.Dtos;
 using MicroserviceSample.PlatformService.Persistance.Repositories;
@@ -13,6 +14,7 @@ public static class CreatePlatformEndpoint
         PlatformCreateDto platformDto,
         IPlatformRepository repository,
         ICommandDataClient commandDataClient,
+        IMessageBusClient messageBusClient,
         IMapper mapper)
     {
         var platform = mapper.Map<Platform>(platformDto);
@@ -22,6 +24,7 @@ public static class CreatePlatformEndpoint
 
         var platformReadDto = mapper.Map<PlatformReadDto>(platform);
 
+        // Send synchronously to CommandService
         try
         {
             await commandDataClient.SendPlatformToCommand(platformReadDto);
@@ -29,6 +32,19 @@ public static class CreatePlatformEndpoint
         catch (Exception ex)
         {
             Console.WriteLine($"--> Could not send synchronously to CommandService: {ex.Message}");
+        }
+
+        // Send asynchronously to CommandService
+        try
+        {
+            var platformPublishedDto = mapper.Map<PlatformPublishedDto>(platformReadDto);
+            platformPublishedDto.Event = "Platform_Published";
+
+            await messageBusClient.PublishNewPlatformAsync(platformPublishedDto);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"--> Could not send asynchronously to CommandService: {ex.Message}");
         }
 
         return TypedResults.Created($"/platforms/{platformReadDto.Id}", platformReadDto);
