@@ -14,5 +14,7 @@ public class PlatformProfile : Profile
         CreateMap<PlatformReadDto, PlatformPublishedDto>();
         CreateMap<PlatformReadDto, PlatformCreateExternalDto>()
             .ForMember(dest => dest.ExternalId, opt => opt.MapFrom(src => src.Id));
+        CreateMap<Platform, GrpcPlatformModel>()
+            .ForMember(dest => dest.PlatformId, opt => opt.MapFrom(src => src.Id));
     }
 }

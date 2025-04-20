@@ -2,6 +2,7 @@ using FluentValidation;
 using MicroserviceSample.PlatformService.AsyncDataServices;
 using MicroserviceSample.PlatformService.Features.Platforms;
 using MicroserviceSample.PlatformService.Persistance;
+using MicroserviceSample.PlatformService.SyncDataServices.Grpc;
 using MicroserviceSample.PlatformService.SyncDataServices.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,7 @@ else
 
 builder.Services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
+builder.Services.AddGrpc();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -47,6 +49,14 @@ app.UseHttpsRedirection();
 
 // Register platform endpoints
 app.MapPlatformEndpoints();
+
+// Register Grpc service
+app.MapGrpcService<GrpcPlatformService>();
+
+app.MapGet("/protos/platforms.proto", async context =>
+{
+    await context.Response.WriteAsync(File.ReadAllText("Protos/platforms.proto"));
+});
 
 PrepDb.PrepPopulation(app, app.Environment.IsProduction());
 
