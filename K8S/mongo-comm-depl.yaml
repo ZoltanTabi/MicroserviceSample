@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo
+  name: mongo-depl
 spec:
   replicas: 1
   selector:
@@ -23,7 +23,7 @@ spec:
       volumes:
         - name: mongodb
           persistentVolumeClaim:
-            claimName: mongo-pvc
+            claimName: mongo-claim
 ---
 apiVersion: v1
 kind: Service
