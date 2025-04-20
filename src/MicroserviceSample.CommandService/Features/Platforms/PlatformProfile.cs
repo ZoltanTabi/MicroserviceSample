@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MicroserviceSample.CommandService.Domains;
 using MicroserviceSample.CommandService.Features.Platforms.Dtos;
+using MicroserviceSample.PlatformService;
 
 namespace MicroserviceSample.CommandService.Features.Platforms;
 
@@ -15,6 +16,10 @@ public class PlatformProfile : Profile
         CreateMap<PlatformPublishedDto, Platform>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.ExternalId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Commands, opt => opt.Ignore());
+        CreateMap<GrpcPlatformModel, Platform>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.ExternalId, opt => opt.MapFrom(src => src.PlatformId))
             .ForMember(dest => dest.Commands, opt => opt.Ignore());
     }
 }

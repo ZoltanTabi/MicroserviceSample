@@ -1,4 +1,5 @@
 using MicroserviceSample.CommandService.Domains;
+using MicroserviceSample.CommandService.SyncaDataServices.Grpc;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -6,14 +7,12 @@ namespace MicroserviceSample.CommandService.Persistance;
 
 public static class PrepDb
 {
-    public static void PrepPopulation(IApplicationBuilder app, bool isProduction)
+    public static void PrepPopulation(IApplicationBuilder app)
     {
-        using var serviceScope = app.ApplicationServices.CreateScope();
-
-        SeedData(app, isProduction);
+        SeedData(app);
     }
 
-    private static void SeedData(IApplicationBuilder app, bool isProduction)
+    private static void SeedData(IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
         var commandStoreDatabaseSettings = scope.ServiceProvider.GetRequiredService<IOptions<CommandStoreDatabaseSettings>>();
@@ -27,29 +26,24 @@ public static class PrepDb
         ArgumentNullException.ThrowIfNull(commandsCollection);
         ArgumentNullException.ThrowIfNull(platformsCollection);
 
-        if (platformsCollection.Find(_ => true).Any())
+        if (platformsCollection.AsQueryable().Any())
         {
             Console.WriteLine("We already have data");
             return;
         }
 
+        var platformDataClient = scope.ServiceProvider.GetRequiredService<IPlatformDataClient>();
+
+        var platforms = platformDataClient.ReturnAllPlatforms();
+
         Console.WriteLine("Seeding data...");
 
-        var platforms = new List<Platform>
+        foreach (var platform in platforms)
         {
-            new() { Name = "DotNet", ExternalId = 1 },
-            new() { Name = "SQL Server Express", ExternalId = 2 },
-            new() { Name = "Kubernetes", ExternalId = 3 }
-        };
-
-        platformsCollection.InsertMany(platforms);
-
-        commandsCollection.InsertMany(
-            new List<Command>
+            if (!platformsCollection.AsQueryable().Any(p => p.ExternalId == platform.ExternalId))
             {
-                new() { HowTo = "Run a .NET app", CommandLine = "dotnet run", PlatformId = platforms[0].Id },
-                new() { HowTo = "Create a migration", CommandLine = "dotnet ef migrations add", PlatformId = platforms[0].Id },
-                new() { HowTo = "Run SQL Server", CommandLine = "sqlcmd -S .", PlatformId = platforms[1].Id }
-            });
+                platformsCollection.InsertOne(platform);
+            }
+        }
     }
 }

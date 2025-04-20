@@ -4,6 +4,7 @@ using MicroserviceSample.CommandService.EventProcessing;
 using MicroserviceSample.CommandService.Features.Commands;
 using MicroserviceSample.CommandService.Features.Platforms;
 using MicroserviceSample.CommandService.Persistance;
+using MicroserviceSample.CommandService.SyncaDataServices.Grpc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddHostedService<MessageBusSubscriber>();
 
 builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 
+builder.Services.AddScoped<IPlatformDataClient, PlatformDataClient>();
+
 // Register FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
@@ -35,6 +38,6 @@ if (app.Environment.IsDevelopment())
 app.MapCommandsEndpoints();
 app.MapPlatformsEndpoints();
 
-PrepDb.PrepPopulation(app, app.Environment.IsProduction());
+PrepDb.PrepPopulation(app);
 
 app.Run();
